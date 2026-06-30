@@ -1,0 +1,29 @@
+.github/workflows/build.yml
+spec/
+output/
+.github/workflows/
+name: Build and Publish XMLSpec
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install xsltproc
+        run: sudo apt-get update && sudo apt-get install -y xsltproc
+
+      - name: Build HTML
+        run: xsltproc spec/xmlspec-html.xsl spec/your-spec.xml > output/your-spec.html
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./output
